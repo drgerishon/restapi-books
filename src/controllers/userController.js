@@ -9,7 +9,7 @@ const generateToken = (id) => {
 
 // User registration
 const registerUser = asyncHandler(async (req, res) => {
-  try {
+  
     const { username, email, password } = req.body;
     //validation
 
@@ -25,7 +25,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     //if user exists
-    const userExists = await User.findById({ email });
+    const userExists = await User.findOne({ email });
     if (userExists) {
       res.status(400);
       throw new Error('user already exists');
@@ -34,32 +34,65 @@ const registerUser = asyncHandler(async (req, res) => {
     //hash the password
     const hashedPass = await bcrypt.hash(password, 10);
     const user = new User({ username, email, password: hashedPass });
-    await user.save();
+  
+    //generate token
+    const token = generateToken(user._id);
 
-    res.status(201).json({ message: 'user registered' });
-  } catch (error) {
-    res.status(500).json({ error: 'Intern server error' });
+     //send HTTP-ONLY cookie
+  res.cookie('token', token, {
+    path: '/',
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 86400),
+    sameSite: 'none',
+    secure: true,
+  });
+
+  if(user) {
+    const {username, email, password} = user;
+    res.status(201).json({ username, email, password, token});
+
+    user.save();
+
+   } else {
+    res.status(500)
+    throw new Error('Internal server error');
   }
 });
 
 // User login
 const loginUser = asyncHandler(async (req, res) => {
-  try {
-    const { email, password } = req.body;
+     const { email, password } = req.body;
     const user = await User.findOne({ email });
 
     //check if user exists in database
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      res.status(401)
+      throw new Error('User does not exist' );
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      res.status(401)
+      throw new Error( 'Invalid credentials');
     }
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET);
-    res.json({ token });
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
+      //generate token
+
+  const token = generateToken(user._id);
+
+  //send HTTP-ONLY cookie
+  res.cookie('token', token, {
+    path: '/',
+    httpOnly: true,
+    expires: new Date(Date.now() + 1000 * 86400),
+    sameSite: 'none',
+    secure: true,
+  });
+  if(user && isPasswordValid) {
+    const {_id, name, email } = user;
+     res.status(200).json({_id,name, email, token})
+  
+  } else {
+    res.status(400)
+    throw new Error('Invalid email or password');
   }
 });
 
