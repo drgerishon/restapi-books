@@ -1,14 +1,32 @@
 const jwt = require('jsonwebtoken');
+const User = require('../models/User')
 const asyncHandler = require('express-async-handler')
 
 // Authentication middleware
-exports.protect = asyncHandler(async (req, res, next) => {
+const protect = asyncHandler(async (req, res, next) => {
   try {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decodedToken.userId;
+   const token = req.cookies.token
+   if(!token) {
+    res.status(401)
+    throw new Error("not authorized. please login")
+   }
+   //verify token
+   const verified = jwt.verify(token, process.env.JWT_SECRET)
+
+   //GET user id from token
+   const user = await User.findById(verified.id).select('-password')
+
+   if(!user){
+    res.status(401)
+    throw new Error ('user not found')
+   }
+   req.user = user;
+
     next();
   } catch (error) {
-    res.status(401).json({ error: 'Unauthorized' });
+    res.status(401)
+    throw new Error("not authorized, please login")
   }
 });
+
+module.exports = protect;
