@@ -1,19 +1,27 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
-
-const bookRoutes = require('./src/routes/bookroutes');
-
-//initialize app
 const app = express();
-
-
-//middleware
-app.use(express.json());
-
-app.use('/books', bookRoutes);
-
 const port = process.env.PORT || 4000;
+const dbConnect = require('./utils/mongoDB');
 
-app.listen(port, () => {
-  console.log(`Book app is running on port ${port}`);
-});
+const bookRoutes = require('././src/routes/bookroutes');
+
+
+// Connect to MongoDB and start the server
+dbConnect()
+  .then(() => {
+    // Middleware
+    app.use(express.json());
+
+    // Routes
+    app.use('/books', bookRoutes);
+
+    // Start the server
+    app.listen(port, () => {
+      console.log(`Book app is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error connecting to MongoDB:', error);
+    process.exit(1);
+  });
