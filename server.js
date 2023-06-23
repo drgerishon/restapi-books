@@ -5,6 +5,7 @@ const port = process.env.PORT || 4000;
 const dbConnect = require('./utils/mongoDB');
 
 const bookRoutes = require('././src/routes/bookroutes');
+const userRoute = require('././src/routes/userRoute')
 
 
 // Connect to MongoDB and start the server
@@ -15,6 +16,7 @@ dbConnect()
 
     // Routes
     app.use('/books', bookRoutes);
+    app.use('/users', userRoute)
 
     // Start the server
     app.listen(port, () => {
