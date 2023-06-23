@@ -1,30 +1,28 @@
-const Book = require('../models/books');
+const Book = require('../models/Books');
 
 // Create a new book
 const createBook = async (req, res) => {
-  try {
-    const { title, author, genre, publishedDate, description } = req.body;
-    const book = new Book({ title, author, genre, publishedDate, description });
-    await book.save();
-    res.status(201).json(book);
-    res.send("book created")
-  } catch (error) {
-    res.status(500).json({ error: 'Internal server error' });
-  }
-};
-
-
-// display all the books
-
-const getAllBooks = async (req, res) => {
     try {
-      const books = await Book.find();
-      res.json(books);
-    res.send("get all books")
+      const { title, author, genre, publishedDate, description } = req.body;
+      const book = new Book({ title, author, genre, publishedDate, description });
+      await book.save();
+      res.status(201).json(book);
     } catch (error) {
       res.status(500).json({ error: 'Internal server error' });
     }
   };
+  
+
+// display all the books
+
+const getAllBooks = async (req, res) => {
+  try {
+    const books = await Book.find();
+    res.json(books);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+};
 // Retrieve a specific book by its ID
 const getBookById = async (req, res) => {
   try {
@@ -70,9 +68,9 @@ const deleteBook = async (req, res) => {
 };
 
 module.exports = {
-    createBook,
-    getAllBooks,
-    getBookById,
-    updateBook,
-    deleteBook,
-}
+  createBook,
+  getAllBooks,
+  getBookById,
+  updateBook,
+  deleteBook,
+};
