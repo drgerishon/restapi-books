@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv').config();
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser')
 
 const dbConnect = require('./src/utils/mongoDB');
 
@@ -18,6 +19,7 @@ dbConnect()
   .then(() => {
     // Middlewares
     app.use(express.json());
+    app.use(cookieParser())
     app.use(express.urlencoded({extended: false}))
     app.use(bodyParser.json())
 

@@ -7,7 +7,7 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '1d' });
 };
 
-// User registration
+// User registration endpoint
 const registerUser = asyncHandler(async (req, res) => {
   
     const { username, email, password } = req.body;
@@ -59,7 +59,7 @@ const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-// User login
+// User login endpoint
 const loginUser = asyncHandler(async (req, res) => {
      const { email, password } = req.body;
     const user = await User.findOne({ email });

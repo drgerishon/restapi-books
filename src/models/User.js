@@ -26,16 +26,16 @@ const userSchema = new mongoose.Schema({
 
 
 //encrypt password before saving
-userSchema.pre('save', async function (next) {
-    if (!this.isModified('password')) {
-      return next();
-    }
-    //hash password
-    const salt = await bcryptjs.genSalt(10);
-    const hashedPassword = await bcryptjs.hash(this.password, salt);
-    this.password = hashedPassword;
-    next();
-  });
+// userSchema.pre('save', async function (next) {
+//     if (!this.isModified('password')) {
+//       return next();
+//     }
+//     //hash password
+//     const salt = await bcryptjs.genSalt(10);
+//     const hashedPassword = await bcryptjs.hash(this.password, salt);
+//     this.password = hashedPassword;
+//     next();
+//   });
 
 const User = mongoose.model('User', userSchema);
 
