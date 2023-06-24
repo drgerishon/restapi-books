@@ -1,4 +1,4 @@
-# My book app API
+# Title: book-app API
 
 # npm install - intalling all depenndencies
 
@@ -8,7 +8,11 @@
 
 # MONGODB_URI
 
+# running the app - npm run dev
+
 # endpints include:
+
+# use postman or isomnia to test the endpoint below
 
 # getting specific book - GET(http://localhost:5000/books/id)
 
@@ -22,6 +26,4 @@
 
 # loggin a user - POST(http://localhost:5000/api/login)
 
-# running the app - npm run dev
 
-#
